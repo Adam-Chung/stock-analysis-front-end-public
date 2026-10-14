@@ -1,0 +1,141 @@
+@if (authService.loggedIn()) {
+<div class="shell">
+  <header class="shell-header">
+    <span class="brand">💰 存股分析</span>
+    @if (authService.loggedIn()) {
+      <button type="button" class="logout-button" (click)="logout()">登出</button>
+    }
+    <button
+      type="button"
+      class="mobile-menu-toggle"
+      [class.active]="mobileMenuOpen()"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-controls="mobile-primary-menu"
+      aria-label="切換功能選單"
+      (click)="toggleMobileMenu()"
+    >
+      <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
+    </button>
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="搜尋股票代號或名稱"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchInput($event)"
+        (keydown.enter)="onSearchSubmit()"
+        (focus)="onSearchFocus()"
+        (blur)="onSearchBlur()"
+      />
+      @if (searchLoading()) {
+        <span class="search-status" role="status">搜尋中…</span>
+      }
+      @if (searchOpen() && searchResults().length > 0) {
+        <ul class="search-results">
+          @for (r of searchResults(); track r.stockId) {
+            <li (mousedown)="openStock(r.stockId)">
+              <span class="result-id">{{ r.stockId }}</span>
+              <span class="result-name">{{ r.stockName }}</span>
+            </li>
+          }
+        </ul>
+      }
+      @if (searchOpen() && searchQuery().trim() && searchResults().length === 0) {
+        <ul class="search-results">
+          <li class="no-result">找不到符合的股票</li>
+        </ul>
+      }
+    </div>
+  </header>
+
+  @if (shellError()) {
+    <div class="global-error" role="alert">
+      <span>{{ shellError() }}</span>
+      <button type="button" (click)="shellError.set(null)" aria-label="關閉錯誤訊息">×</button>
+    </div>
+  }
+
+  <div class="quota-notice" role="status">
+    <span>ⓘ 本站串接第三方免費資料源，首次查詢個別股票時可能需要等待數秒到十幾秒，請耐心等候。</span>
+  </div>
+
+  @if (mobileMenuOpen()) {
+    <nav id="mobile-primary-menu" class="mobile-primary-menu" aria-label="手機功能選單">
+      <p class="sidebar-label">功能選單</p>
+      @for (item of menuItems; track item.path) {
+        <a class="menu-item active" [routerLink]="item.path" (click)="closeMobileMenu()">
+          <span class="menu-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+      <p class="menu-hint">後續功能將顯示於此</p>
+    </nav>
+  }
+
+  <div class="shell-body">
+    <main class="shell-main">
+      <router-outlet />
+    </main>
+
+    <aside class="app-sidebar">
+      <nav class="primary-menu" aria-label="主要功能">
+        <p class="sidebar-label">功能選單</p>
+        @for (item of menuItems; track item.path) {
+          <a class="menu-item active" [routerLink]="item.path" aria-current="page">
+            <span class="menu-icon">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+        <p class="menu-hint">後續功能將顯示於此</p>
+      </nav>
+
+      <section class="favorites-section">
+        <div class="favorites-heading">
+          <h2>我的最愛</h2>
+          <button
+            type="button"
+            class="sidebar-toggle"
+            [class.active]="sidebarVisible()"
+            [attr.aria-expanded]="sidebarVisible()"
+            aria-controls="favorites-content"
+            (click)="toggleSidebar()"
+          >
+            {{ sidebarVisible() ? '收合' : '展開' }}
+          </button>
+        </div>
+
+        @if (sidebarVisible()) {
+          <div id="favorites-content" class="favorites-content">
+            @if (favoritesLoading()) {
+              <p class="empty" role="status">載入中…</p>
+            } @else if (favoritesService.favorites().length === 0) {
+              <p class="empty">尚未加入任何股票，開啟一支股票後點右上角的☆即可收藏。</p>
+            } @else {
+              <ul>
+                @for (f of favoritesService.favorites(); track f.stockId) {
+                  <li (click)="openStock(f.stockId)">
+                    <span class="fav-info">
+                      <span class="fav-id">{{ f.stockId }}</span>
+                      <span class="fav-name">{{ f.stockName }}</span>
+                    </span>
+                    <button
+                      type="button"
+                      class="fav-remove"
+                      (click)="onRemoveFavorite(f.stockId, $event)"
+                      aria-label="從我的最愛移除"
+                      title="從我的最愛移除"
+                    >
+                      ×
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </section>
+    </aside>
+  </div>
+</div>
+} @else {
+  <router-outlet />
+}

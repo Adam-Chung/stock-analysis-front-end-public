@@ -1,0 +1,355 @@
+/* Ported from prototype/stock-health-prototype.html (already reviewed with the user). */
+
+/* max-width/padding 對齊 target-price.scss 的 .app，讓兩個頁面版面大小看起來一致。 */
+.health-check {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.state-message {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--ink-dim);
+}
+.state-message.error {
+  color: var(--bad);
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+/* .btn／.topbar／.stock-id／.stock-name／.industry-tag／.stock-head／.favorite-toggle／
+   .price-group／.price-block／.price-label／.price-value 已抽到全域 styles.scss，兩頁共用
+   同一份定義，這裡不再重複。 */
+
+/* ---- Update bar ---- */
+.update-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  padding: 0.75rem 1.1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+}
+.update-bar .update-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.update-bar b {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.action-message {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---- Layout ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 公司資訊／AI投資建議兩張卡片共用一個 grid column（Task 56 修正）：`.layout` 只能有
+   2個直接子元素（本欄／main），否則 grid 預設的逐列排列會把第3個子元素擠到 main 前面，
+   連帶把 main 擠到左欄下方。 */
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .panel／.panel h2 的底色/邊框/字體已抽到全域 styles.scss；這裡只加這個頁面需要的
+   margin-bottom（target-price 頁改用 flex/grid 的 gap 排版，不需要這個，兩頁刻意不同）。 */
+.panel {
+  margin-bottom: 1rem;
+}
+
+/* ---- AI 投資建議（DEC-068 後續實作）：.ai-text／.ai-meta 已抽到全域 styles.scss，
+   跟目標價頁共用同一份卡片內容樣式，這裡不需要再定義。 ---- */
+
+/* ---- 銀行模板專屬的兩張表格（營收(月)／股價變化），比照 health-check-category.scss
+   的 .category/.category-header/.category-toggle/.category-body 收合樣式（元件各自
+   view-encapsulated，無法跨元件共用 class，這裡是同一套視覺規則的獨立複本）。 ---- */
+.collapsible-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 1rem;
+}
+.collapsible-panel-header h2 {
+  margin: 0;
+}
+.collapsible-panel-toggle {
+  flex: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  transition: transform 0.15s ease;
+}
+.collapsible-panel.collapsed .collapsible-panel-toggle {
+  transform: rotate(-90deg);
+}
+.collapsible-panel.collapsed .collapsible-panel-body {
+  display: none;
+}
+
+/* ---- Info panel (aside) ---- */
+.info-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.info-panel-header h2 {
+  margin: 0;
+}
+.info-panel-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.info-panel.collapsed .info-panel-toggle {
+  transform: rotate(-90deg);
+}
+@media (max-width: 860px) {
+  .info-panel-toggle {
+    display: inline-flex;
+  }
+  .info-panel.collapsed .info-panel-body {
+    display: none;
+  }
+}
+
+.field {
+  margin-bottom: 1.1rem;
+}
+.field:last-child {
+  margin-bottom: 0;
+}
+.field label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.field .hint {
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+.field textarea {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--hair);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  resize: vertical;
+  min-height: 10rem;
+  line-height: 1.65;
+}
+.field textarea.note-area {
+  min-height: 8rem;
+}
+.field textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.subsection {
+  margin-top: 1.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair);
+}
+.subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.subsection-header h3 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-dim);
+  font-weight: 700;
+  margin: 0;
+}
+
+.save-profile-btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* ---- Main canvas ---- */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  .overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.stat {
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+.stat .k {
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+.stat .v {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.stat .v.small {
+  font-size: 1rem;
+}
+.stat.hero {
+  background: var(--accent-dim);
+}
+.stat.hero .v {
+  color: var(--accent);
+}
+.stat.link-stat {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+.stat.link-stat:hover {
+  border-color: var(--accent);
+}
+.stat.link-stat .v {
+  color: var(--accent);
+}
+
+.checklist-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.2rem 0.1rem;
+  margin-bottom: 0.7rem;
+}
+.checklist-toolbar h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ---- Bank 股價變化 table ---- */
+.table-scroll {
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  min-width: 26rem;
+}
+.data-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--hair);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--hair) 55%, transparent);
+  white-space: nowrap;
+}
+.data-table td.num,
+.data-table th.num {
+  text-align: right;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+footer.note {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--hair);
+  padding-top: 1rem;
+}
+
+/* ---- 銀行模板「營收(月)」表格的單一筆記欄位（DEC-062） ----
+   .metric-note 系列已抽到全域 styles.scss（跟 health-check-category.scss 共用），這裡只加
+   這個頁面級用法需要的外距。 */
+.metric-note {
+  margin-top: 1rem;
+}

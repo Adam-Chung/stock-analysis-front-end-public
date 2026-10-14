@@ -1,0 +1,257 @@
+@if (!loaded() && !loadError()) {
+  <div class="state-message">載入中…</div>
+} @else if (loadError()) {
+  <div class="state-message error">
+    <p>{{ loadError() }}</p>
+    <button type="button" class="btn" (click)="loadStock(stockId())">重試</button>
+  </div>
+} @else if (data(); as d) {
+  <div class="health-check">
+    <h1 class="page-title">企業體質檢視</h1>
+    <header class="topbar">
+      <div class="stock-head">
+        <span class="stock-id">{{ d.stockId }}</span>
+        <span class="stock-name">
+          {{ d.stockName }}
+          @if (d.industryCategory) {
+            <span class="industry-tag">・{{ d.industryCategory }}</span>
+          }
+        </span>
+      </div>
+      <app-favorite-toggle
+        [stockId]="d.stockId"
+        [stockName]="d.stockName"
+        [industryCategory]="d.industryCategory"
+        (error)="actionMessage.set($event)"
+      />
+      <a class="cross-page-link" [routerLink]="['/target-price', d.stockId]" title="查看這支股票的目標價估值">
+        📈 查看目標價估值
+      </a>
+      @if (d.currentPrice !== null) {
+        <div class="price-group">
+          <div class="price-block">
+            <span class="price-label">目前成交價</span>
+            <span class="price-value">NT$ {{ d.currentPrice }}</span>
+          </div>
+        </div>
+      }
+    </header>
+
+    <div class="update-bar">
+      <div class="update-meta">
+        <span>資料季度：<b>{{ d.profile.lastReviewedQuarter || '尚未同步' }}</b></span>
+        <span>更新時間：<b>{{ d.profile.updatedAt ? (d.profile.updatedAt | date: 'yyyy-MM-dd HH:mm') : '—' }}</b></span>
+      </div>
+      @if (actionMessage()) {
+        <span class="action-message">{{ actionMessage() }}</span>
+      }
+      <button
+        type="button"
+        class="btn primary"
+        [disabled]="externalSyncing()"
+        (click)="onUpdateAll()"
+        title="從 TWSE OpenAPI／銀行局自動同步董監持股、法人持股比季變化、銀行監理指標（DEC-046~050）"
+      >
+        {{ externalSyncing() ? '更新中…' : '🔄 更新本季資料' }}
+      </button>
+    </div>
+
+    <div class="layout">
+      <div class="sidebar-column">
+        <aside class="panel info-panel" [class.collapsed]="infoPanelCollapsed()">
+          <div class="info-panel-header">
+            <h2>公司資訊</h2>
+            <button type="button" class="info-panel-toggle" (click)="toggleInfoPanel()" aria-label="展開／收合公司資訊">▾</button>
+          </div>
+          <div class="info-panel-body">
+            <div class="field">
+              <label for="profileText">公司簡介</label>
+              <textarea id="profileText" [ngModel]="profileText()" (ngModelChange)="profileText.set($event)"></textarea>
+            </div>
+            <div class="subsection">
+              <div class="subsection-header">
+                <h3>自訂備註</h3>
+              </div>
+              <div class="field" style="margin-bottom: 0">
+                <label for="customNote">整體評語 <span class="hint">與下方逐項筆記分開，寫整體看法</span></label>
+                <textarea
+                  id="customNote"
+                  class="note-area"
+                  [ngModel]="customNoteText()"
+                  (ngModelChange)="customNoteText.set($event)"
+                ></textarea>
+              </div>
+            </div>
+            <button type="button" class="btn small save-profile-btn" [disabled]="savingProfile()" (click)="onSaveProfile()">
+              {{ savingProfile() ? '儲存中…' : '儲存公司資訊' }}
+            </button>
+          </div>
+        </aside>
+
+        <aside class="panel ai-card">
+          <h2>AI 投資建議</h2>
+          <div class="ai-text">
+            {{ aiText() || '尚未產生建議，點擊下方按鈕，根據本季不達標細項查證原因，並評估投資與財報體質。' }}
+          </div>
+          <div class="ai-meta">
+            <span>上次更新時間：<b>{{ aiUpdatedAt() ? (aiUpdatedAt() | date: 'yyyy-MM-dd HH:mm') : '—' }}</b></span>
+            <button
+              type="button"
+              class="btn primary"
+              [disabled]="aiLoading()"
+              [attr.aria-busy]="aiLoading()"
+              (click)="onRequestAiSuggestion()"
+            >
+              {{ aiLoading() ? 'AI 分析中…' : aiUpdatedAt() ? '重新產生 AI 建議' : '產生 AI 建議' }}
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <main class="main-canvas">
+        <section class="panel">
+          <h2>總覽</h2>
+          @let counts = overallCounts();
+          <div class="overview-grid">
+            <div class="stat hero">
+              <div class="k">整體達標</div>
+              <div class="v">{{ counts.pass }} / {{ counts.evaluated }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">產業模板</div>
+              <div class="v small">{{ d.template === 'BANK' ? '銀行股' : '一般個股' }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">檢視項目數</div>
+              <div class="v small">{{ categoryCount() }} 大項</div>
+            </div>
+            <a
+              class="stat link-stat"
+              [href]="'https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID=' + d.stockId"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="前往 Goodinfo 查看這支股票的詳細資料"
+            >
+              <div class="k">個股資料</div>
+              <div class="v small">Goodinfo ↗</div>
+            </a>
+          </div>
+        </section>
+
+        <div class="checklist-toolbar">
+          <h2>財務體質檢視項目</h2>
+          <button type="button" class="btn small" (click)="toggleAllCategories()">
+            {{ allExpanded() ? '全部收合' : '全部展開' }}
+          </button>
+        </div>
+
+        <div class="category-list">
+          @for (category of d.categories; track category.key) {
+            @if (category.key !== 'bankRevenue') {
+              <app-health-check-category
+                [category]="category"
+                [edits]="edits()"
+                [savingKeys]="savingNoteKeys()"
+                [forceCollapsed]="collapseSignal()"
+                (noteInput)="onNoteInput($event)"
+                (noteSave)="onSaveNote($event)"
+              />
+            }
+          }
+        </div>
+
+        @if (d.template === 'BANK' && bankRevenueRows().length > 0) {
+          <section class="panel collapsible-panel" [class.collapsed]="bankRevenueCollapsed()">
+            <div class="collapsible-panel-header" (click)="toggleBankRevenueCollapsed()">
+              <h2>營收(月)</h2>
+              <span class="collapsible-panel-toggle">▾</span>
+            </div>
+            <div class="collapsible-panel-body">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>月份</th>
+                      <th class="num">月營收(億)</th>
+                      <th class="num">月增(%)</th>
+                      <th class="num">年增(%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of bankRevenueRows(); track row.period) {
+                      <tr>
+                        <td>{{ row.period }}</td>
+                        <td class="num">{{ row.monthlyRevenue ?? '—' }}</td>
+                        <td class="num">{{ row.momGrowth ?? '—' }}</td>
+                        <td class="num">{{ row.yoyGrowth ?? '—' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <div class="metric-note">
+                <label>
+                  最新一期（{{ bankRevenueRows()[0].period }}）筆記
+                  <span class="hint">（選填）</span>
+                </label>
+                <div class="metric-note-row">
+                  <textarea
+                    [ngModel]="bankRevenueNote()"
+                    (ngModelChange)="onBankRevenueNoteInput($event)"
+                    placeholder="例如：單月營收波動原因、下一季追蹤重點…"
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="btn small note-save-btn"
+                    [disabled]="isBankRevenueNoteSaving()"
+                    (click)="onBankRevenueNoteSave()"
+                  >
+                    {{ isBankRevenueNoteSaving() ? '儲存中…' : '儲存' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        }
+
+        @if (d.template === 'BANK' && d.priceTrend.length > 0) {
+          <section class="panel collapsible-panel" [class.collapsed]="priceTrendCollapsed()">
+            <div class="collapsible-panel-header" (click)="togglePriceTrendCollapsed()">
+              <h2>股價變化（近10年，年均）</h2>
+              <span class="collapsible-panel-toggle">▾</span>
+            </div>
+            <div class="collapsible-panel-body">
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>年度</th>
+                      <th class="num">年均價</th>
+                      <th class="num">年均PBR</th>
+                      <th class="num">年均PER</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of d.priceTrend; track row.year) {
+                      <tr>
+                        <td>{{ row.year }}</td>
+                        <td class="num">{{ row.avgClosePrice ?? '—' }}</td>
+                        <td class="num">{{ row.avgPbr ?? '—' }} 倍</td>
+                        <td class="num">{{ row.avgPer ?? '—' }} 倍</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        }
+      </main>
+    </div>
+
+    <footer class="note">
+      一般模板／銀行模板由系統依產業別自動判斷（不可手動切換）。細項數值來自「更新本季資料」
+      觸發的外部資料同步或既有資料，畫面上只能針對最新一期補筆記；達標狀態由後端依門檻計算。
+    </footer>
+  </div>
+}

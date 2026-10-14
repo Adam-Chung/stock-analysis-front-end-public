@@ -1,0 +1,222 @@
+<div class="about">
+  <header class="about-hero">
+    <h1>存股分析</h1>
+    <p class="tagline">找出「值得長期持有、現在買不貴」的股票。</p>
+  </header>
+
+  <section class="about-card">
+    <h2>這個網站在做什麼</h2>
+    <p>
+      本存股分析網站協助目標股票是否值得存股，以及什麼時候進場。
+      以股價為核心，計算出六檔目標價，並顯示與目標價的差異，以及過去10年股價的高低點。
+      並提供企業體質檢視，檢視公司的獲利能力、現金流、負債壓力、股東結構等面向。
+      最後提供AI研究摘要，結合近期公開事件與基本面，僅供參考、非投資建議。
+    </p>
+  </section>
+
+  <section class="about-card">
+    <h2>頁面說明</h2>
+
+    <h3>企業體質檢視</h3>
+    <p>
+      企業體質檢視著重於這家公司體質好不好，是否值得長期持有。
+      系統會依股票的產業別自動套用「一般模板」或「銀行模板」，把獲利能力、
+      現金流、負債壓力、股東結構等面向拆成多個大項與細項，逐季顯示數值與達標狀態。
+    </p>
+    <dl class="formula-list">
+      <div class="formula-row">
+        <dt>一般模板</dt>
+        <dd>
+          12 大項，涵蓋是否年年賺錢、靠本業賺錢、現金流、負債壓力、股本膨脹率、內行人持有率、
+          盈餘分配率、毛利率、營業數據（營業利益／淨利／EPS／ROE）等。
+        </dd>
+      </div>
+      <div class="formula-row">
+        <dt>銀行模板</dt>
+        <dd>
+          套用金融業股票，額外顯示月營收、股價變化（年均價／PBR／PER）、籌碼變化（外資與三大
+          法人買賣超）、銀行監理指標（資本適足率／逾期放款比率／備抵呆帳覆蓋率）。
+        </dd>
+      </div>
+      <div class="formula-row">
+        <dt>更新本季資料</dt>
+        <dd>
+          觸發外部資料同步，涵蓋畫面上絕大多數細項（董監持股與質押、法人持股比季變化、
+          銀行監理三指標，以及是否賺錢、現金流、股本膨脹率、毛利率、營業數據、月營收、
+          籌碼變化等），同步後自動重新載入最新資料。若其中一個外部來源當下無法連線，
+          會在這裡顯示提示訊息，不影響另一個來源已同步的結果。銀行模板因財報結構本身
+          沒有對應科目，不顯示自由金流、營業利益這兩個細項。
+        </dd>
+      </div>
+      <div class="formula-row">
+        <dt>筆記</dt>
+        <dd>每個細項可針對最新一期填寫筆記並獨立儲存，跟「更新本季資料」按鈕互不影響。</dd>
+      </div>
+    </dl>
+
+    <br>
+    <h3>目標價分析</h3>
+    <p>
+      目標價分析著重於這家公司現在的股價，相對於它自己近10年的歷史股價區間，
+      是便宜、合理，還是昂貴——這是「存股」（長期持有、領股息為主）策略最在意的問題：
+      不是這家公司好不好，而是現在進場划不划算。
+    </p>
+    <dl class="formula-list">
+      <div class="formula-row">
+        <dt>EPS取X年平均／BPS取X年平均</dt>
+        <dd>使用者可調整的設定（3／5／10年），決定下面公式裡的 EPS、BPS 各自要取近幾年平均。</dd>
+      </div>
+      <div class="formula-row">
+        <dt>1便宜價</dt>
+        <dd>(EPS(X年平均) × 10年平均最低PER + BPS(X年平均) × 10年平均最低PBR) ÷ 2</dd>
+      </div>
+      <div class="formula-row">
+        <dt>2次便宜</dt>
+        <dd>(1便宜價 + 3合理價) ÷ 2</dd>
+      </div>
+      <div class="formula-row">
+        <dt>3合理價</dt>
+        <dd>(EPS(X年平均) × 10年平均PER + BPS(X年平均) × 10年平均PBR) ÷ 2</dd>
+      </div>
+      <div class="formula-row">
+        <dt>4昂貴價</dt>
+        <dd>(EPS(X年平均) × 10年平均最高PER + BPS(X年平均) × 10年平均最高PBR) ÷ 2</dd>
+      </div>
+      <div class="formula-row">
+        <dt>5超貴價</dt>
+        <dd>(10年高 − 4昂貴價) × 1/3 + 4昂貴價</dd>
+      </div>
+      <div class="formula-row">
+        <dt>6爆炸貴</dt>
+        <dd>(10年高 − 4昂貴價) × 2/3 + 4昂貴價</dd>
+      </div>
+      <div class="formula-row">
+        <dt>目標價</dt>
+        <dd>依「目標價選擇」設定，對應到上面六檔中的其中一檔。</dd>
+      </div>
+      <div class="formula-row">
+        <dt>與目標價差比</dt>
+        <dd>目前成交價 ÷ 目標價 − 1（畫面上以「貴／便宜」徽章顯示）</dd>
+      </div>
+      <div class="formula-row">
+        <dt>加一年股利價</dt>
+        <dd>目標價 × (1 + 十年平均殖利率)</dd>
+      </div>
+      <div class="formula-row">
+        <dt>X年內買回</dt>
+        <dd>
+          LOG(1 + 與目標價差比) ÷ LOG(1 + 十年平均殖利率)；現價已達或低於目標價時顯示「0／已達成」，不顯示負值。
+        </dd>
+      </div>
+      <div class="formula-row">
+        <dt>前目標價出現</dt>
+        <dd>近10年（含今年至今的即時股價）中，最近一次「該年度最低價 ≤ 目標價」的年份。</dd>
+      </div>
+      <div class="formula-row">
+        <dt>十年平均殖利率</dt>
+        <dd>近10個完整年度，依當年度現金＋股票股利換算的還原殖利率，取平均。</dd>
+      </div>
+      <div class="formula-row">
+        <dt>股利發日（除息日）</dt>
+        <dd>已公告的除息交易日中，優先取最近的未來一筆；沒有未來已公告資料時，退回最近的過去一筆。</dd>
+      </div>
+      <div class="formula-row">
+        <dt>賣賺幾年</dt>
+        <dd>
+          (目前成交價 − 3合理價) ÷ 3合理價 ÷ 十年平均殖利率；現價尚未超過合理價時顯示「尚未獲利」，不顯示負值。
+        </dd>
+      </div>
+      <div class="formula-row">
+        <dt>10年高／10年低</dt>
+        <dd>近10個完整年度（含今年至今的即時股價）盤中最高／最低價。</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="about-card">
+    <h2>目前功能</h2>
+    <ul>
+      <li>股票代號／名稱搜尋，快速切換分析標的（結果會停留在目前所在的分析頁面類型）</li>
+      <li>六檔目標價、估值涵蓋度、與目標價差比等完整計算結果</li>
+      <li>可自訂 EPS／BPS 取幾年平均，設定會依股票各自保存</li>
+      <li>一鍵產生 AI 研究摘要（結合近期公開事件與基本面，僅供參考、非投資建議）</li>
+      <li>企業體質檢視：一般／銀行模板自動判斷、逐季達標狀態、外部資料同步、每項獨立筆記</li>
+      <li>目標價分析與企業體質檢視互相提供跳轉按鈕，同一支股票可快速切換兩種分析角度</li>
+      <li>我的最愛：追蹤常關注的股票，快速切換，並會停留在目前所在的分析頁面類型</li>
+    </ul>
+  </section>
+
+  <section class="about-card">
+    <h2>財務資訊公布時程</h2>
+
+    <h3>每月營收</h3>
+    <dl class="formula-list">
+      <div class="formula-row">
+        <dt>每月</dt>
+        <dd>每月10日前公布上個月的營收</dd>
+      </div>
+    </dl>
+
+    <br>
+    <h3>財報公布時程</h3>
+    <div class="report-schedule-table-wrapper">
+      <table class="report-schedule-table">
+        <thead>
+          <tr>
+            <th scope="col">財報</th>
+            <th scope="col">一般公司</th>
+            <th scope="col">金融業（銀行、金控、保險等）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Q1（第一季）</th>
+            <td>5/15 前</td>
+            <td>5/15 前</td>
+          </tr>
+          <tr>
+            <th scope="row">Q2（第二季）</th>
+            <td>8/14 前</td>
+            <td>8/31 前</td>
+          </tr>
+          <tr>
+            <th scope="row">Q3（第三季）</th>
+            <td>11/14 前</td>
+            <td>11/30 前</td>
+          </tr>
+          <tr>
+            <th scope="row">年度（Q4／年報）</th>
+            <td>3/31 前</td>
+            <td>3/31 前</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="about-card">
+    <h2>存股步驟說明</h2>
+    <div class="investing-steps-table-wrapper">
+      <table class="investing-steps-table">
+        <thead><tr><th scope="col">步驟</th><th scope="col">說明</th></tr></thead>
+        <tbody>
+          <tr>
+            <th scope="row">存股條件篩選</th>
+            <td>初步找出好公司。<a [href]="goodinfoScreeningUrl" target="_blank" rel="noopener noreferrer">開啟 Goodinfo 存股條件篩選 ↗</a></td>
+          </tr>
+          <tr><th scope="row">挑選適當產業</th><td>適時排除景氣循環股、熱門股。</td></tr>
+          <tr><th scope="row">企業體質檢視</th><td>檢視企業體質，確認是否存在影響長期持有的問題。</td></tr>
+          <tr><th scope="row">估價</th><td>確認合理價，等待適當時機買入或採取定期定額。</td></tr>
+          <tr>
+            <th scope="row">定期檢視</th>
+            <td>每季確認企業體質、估價、新聞趨勢，以及是否持續定期定額。3 月看年報；5 月、8 月、11 月看季報與法說會。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="disclaimer">
+    本站所有數值僅為歷史資料的統計換算，不構成投資建議，投資決策請自行判斷並承擔風險。
+  </p>
+</div>

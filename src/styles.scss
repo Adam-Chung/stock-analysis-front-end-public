@@ -1,0 +1,336 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'primeicons/primeicons.css';
+
+/*
+ * Design tokens shared by every screen. Colours/scale ported from
+ * prototype/target-price-prototype.html (this repo, already reviewed with the user) -
+ * keep in sync if that file's palette changes.
+ */
+:root {
+  --bg: #0f1416;
+  --panel: #161d21;
+  --panel-2: #1d262b;
+  --ink: #eef2f3;
+  --ink-dim: #9fb0b5;
+  --hair: #2a3439;
+  --accent: #6c8eff;
+  --accent-dim: #26305c;
+  --good: #3fae7a;
+  --good-bg: #132821;
+  --bad: #d9614f;
+  --bad-bg: #2c1815;
+  --tier-1: #3fae7a;
+  --tier-2: #7cb662;
+  --tier-3: #c9b944;
+  --tier-4: #dd9440;
+  --tier-5: #d97240;
+  --tier-6: #c8433f;
+  --mono:
+    ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --sans:
+    -apple-system, 'Segoe UI', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui,
+    sans-serif;
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #f3f1ea;
+  --panel: #ffffff;
+  --panel-2: #ece7db;
+  --ink: #1c2422;
+  --ink-dim: #5c6a68;
+  --hair: #ddd6c4;
+  --accent: #3a56c9;
+  --accent-dim: #dbe1fb;
+  --good: #1f8f5f;
+  --good-bg: #e2f3ea;
+  --bad: #b8402f;
+  --bad-bg: #fbe6e1;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #f3f1ea;
+    --panel: #ffffff;
+    --panel-2: #ece7db;
+    --ink: #1c2422;
+    --ink-dim: #5c6a68;
+    --hair: #ddd6c4;
+    --accent: #3a56c9;
+    --accent-dim: #dbe1fb;
+    --good: #1f8f5f;
+    --good-bg: #e2f3ea;
+    --bad: #b8402f;
+    --bad-bg: #fbe6e1;
+    color-scheme: light;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.5;
+}
+
+/* Angular root 是自訂 element；明確設為 block，避免手機瀏覽器依內容縮成非滿版寬度。 */
+app-root {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/*
+ * 目標價分析／企業體質檢視兩個頁面互跳按鈕的共用樣式——特意放在全域樣式表而非各自的
+ * component .scss，確保兩頁的位置/樣式逐像素一致，不會因為各自維護各自的 scoped style
+ * 而慢慢跑掉。放在 topbar 裡、緊接在我的最愛星星按鈕之後。
+ */
+.cross-page-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  /* 讓「我的最愛」星星＋這顆互跳按鈕跟股票代號/名稱一起靠左；topbar 剩下的內容（貴/便宜
+     chip、成交價等）自然被推到右邊。 */
+  margin-right: auto;
+}
+.cross-page-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/*
+ * 通用按鈕樣式——目標價分析／企業體質檢視兩個頁面，以及體質檢視的檢視項目子元件
+ * （app-health-check-category）各自定義過同一份 .btn/.btn.primary/.btn.small，
+ * 抽到全域避免繼續各自漂移（比照上面 .cross-page-link 的既有模式）。
+ */
+.btn {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn.small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+}
+
+/*
+ * Topbar 股票資訊區塊（代號／名稱／產業標籤／收藏按鈕／成交價）——目標價分析／企業體質檢視
+ * 兩頁的 topbar 內容結構相同，抽到全域避免各自漂移（例如曾經發生過 health-check 的
+ * .price-value 字級忘記跟 target-price 同步的狀況）。
+ */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.25rem;
+}
+.stock-id {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.stock-name {
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+}
+.industry-tag {
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+  opacity: 0.75;
+  margin-left: 0.35rem;
+}
+.stock-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.favorite-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 8px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.favorite-toggle:hover {
+  border-color: var(--accent);
+}
+.favorite-toggle.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.price-group {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.price-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+/* 目標價頁的「目標價」price-block 用強調色標出，體質檢視頁只有一個 price-block（成交價）
+   不會用到這個修飾 class，放在全域無妨。 */
+.price-block.target .price-value {
+  color: var(--accent);
+}
+.price-label {
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.price-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* 卡片容器——兩頁與體質檢視多個區塊共用的基礎卡片樣式；margin-bottom 等版面間距留給各自
+   頁面決定（有些頁面用 flex/grid 的 gap，有些用 margin-bottom），不放在這裡統一設定。 */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  padding: 1.2rem 1.3rem;
+}
+.panel h2 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-dim);
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
+/*
+ * 單一細項的筆記編輯區塊（textarea＋儲存按鈕）——體質檢視頁面層級（bankRevenue 表格）跟
+ * app-health-check-category 子元件各自需要一份（Angular 元件樣式不會跨元件套用），抽到
+ * 全域讓兩處共用同一份定義，不用各自維護。
+ */
+.metric-note label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  margin-bottom: 0.3rem;
+}
+.metric-note .hint {
+  font-weight: 400;
+  opacity: 0.8;
+}
+.metric-note-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.metric-note textarea {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel-2);
+  border: 1px solid var(--hair);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  resize: vertical;
+  min-height: 2.3rem;
+  line-height: 1.5;
+}
+.metric-note textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.note-save-btn {
+  flex: none;
+}
+
+/*
+ * AI 投資建議卡片內容（目標價頁／體質檢視頁各自的 .ai-card 都需要一份，比照上面
+ * .metric-note 的既有模式抽到全域）。卡片本身在版面中的位置/margin 由各頁自己的
+ * scss 決定（target-price 是 .layout 下方的獨立區塊，health-check 是 sidebar-column
+ * 裡疊在 .info-panel 下方的卡片，兩頁刻意不同，不放進這裡）。
+ */
+.ai-text {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.9rem;
+  min-height: 3.2rem;
+  /* 後端把 Groq 回應整理成 \n\n 分隔的段落文字，這裡用 pre-line 保留換行同時把段落內部
+     多餘空白壓成一個空格，讓 AI 建議實際顯示分段，而不是擠成一整塊文字。 */
+  white-space: pre-line;
+}
+.ai-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+}
+.ai-meta b {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}

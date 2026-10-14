@@ -1,0 +1,658 @@
+.app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.screen-state {
+  max-width: 720px;
+  margin: 4rem auto;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--ink-dim);
+
+  &.error {
+    color: var(--bad);
+  }
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+.action-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--hair);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.save-settings {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.proto-banner {
+  background: var(--panel-2);
+  border: 1px dashed var(--hair);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  margin-bottom: 1.25rem;
+
+  b {
+    color: var(--ink);
+  }
+}
+
+/* .topbar／.stock-id／.stock-name／.industry-tag／.stock-head／.price-group／.price-block／
+   .price-label／.price-value 已抽到全域 styles.scss，兩頁共用同一份定義，這裡不再重複。 */
+
+.price-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--hair);
+}
+
+@media (max-width: 520px) {
+  .price-divider {
+    display: none;
+  }
+}
+
+.chip {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 99px;
+  white-space: nowrap;
+
+  &.bad {
+    background: var(--bad-bg);
+    color: var(--bad);
+  }
+
+  &.good {
+    background: var(--good-bg);
+    color: var(--good);
+  }
+}
+
+/* .favorite-toggle 已抽到全域 styles.scss。 */
+
+/* ---- Update bar ---- */
+.update-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  padding: 0.75rem 1.1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+
+  b {
+    color: var(--ink);
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+}
+
+/* .btn／.btn.primary 已抽到全域 styles.scss。 */
+
+/* ---- Layout ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* .panel／.panel h2 已抽到全域 styles.scss；這頁的卡片間距靠 .layout/.main-canvas 的
+   flex/grid gap，不需要額外的 margin-bottom。 */
+
+/* ---- Settings panel ---- */
+.field {
+  margin-bottom: 1.1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .hint {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    font-weight: 400;
+    margin-top: 0.25rem;
+  }
+
+  textarea,
+  select {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--hair);
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 0.55rem 0.65rem;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 3.4rem;
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  select:focus,
+  textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.valuation-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  margin-top: 0.5rem;
+  padding-inline: 0.55rem;
+  color: var(--accent);
+  text-decoration: none;
+  text-align: center;
+}
+
+.subsection {
+  margin-top: 1.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair);
+}
+
+.subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+
+  h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-dim);
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.subsection-toggle-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.subsection.collapsed .subsection-toggle-btn {
+  transform: rotate(-90deg);
+}
+
+.subsection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+@media (max-width: 860px) {
+  .subsection-toggle-btn {
+    display: inline-flex;
+  }
+
+  .subsection.collapsed .subsection-body {
+    display: none;
+  }
+
+  .save-settings.settings-collapsed {
+    display: none;
+  }
+}
+
+/* ---- Main canvas ---- */
+.main-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ladder (desktop) */
+.ladder-track {
+  position: relative;
+  height: 2.6rem;
+  border-radius: 99px;
+  margin: 2.6rem 0.5rem 3.8rem;
+  background: linear-gradient(
+    to right,
+    var(--tier-1) 0%,
+    var(--tier-2) 20%,
+    var(--tier-3) 40%,
+    var(--tier-4) 60%,
+    var(--tier-5) 80%,
+    var(--tier-6) 100%
+  );
+  opacity: 0.9;
+}
+
+.tick {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  cursor: default;
+
+  &.selected {
+    width: 1.3rem;
+    height: 1.3rem;
+    border: 3px solid var(--ink);
+    box-shadow: 0 0 0 3px var(--accent);
+  }
+}
+
+.tick-label {
+  position: absolute;
+  top: -2.1rem;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  text-align: center;
+  z-index: 1;
+
+  b {
+    display: block;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Staggered row (see TargetPrice.tierTicks): when a tier's price sits too close to a
+     neighbour's for both labels to fit above the track, drop this one below the track instead
+     of stacking it further above - keeps each label right next to its own tick rather than
+     floating over unrelated ones. */
+  &.row-1 {
+    top: 100%;
+    margin-top: 1.5rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      width: 1px;
+      height: 1.2rem;
+      background: var(--hair);
+    }
+  }
+}
+
+.range-label {
+  position: absolute;
+  top: 100%;
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+
+  &.low {
+    left: 0;
+  }
+
+  &.high {
+    right: 0;
+    text-align: right;
+  }
+}
+
+.current-pin {
+  position: absolute;
+  bottom: 100%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.35rem;
+
+  .flag {
+    background: var(--ink);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .stem {
+    width: 2px;
+    height: 0.9rem;
+    background: var(--ink);
+  }
+}
+
+.ladder-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* 10年高/10年低 use the same row styling as the six tiers (per user feedback) rather than a
+     separate summary strip - .range-row only overrides the swatch colour. */
+  .range-row .range-swatch {
+    background: var(--ink-dim);
+  }
+
+  .tier-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--hair);
+
+    &.selected {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+  }
+
+  .tier-name {
+    flex: 1;
+    font-size: 0.85rem;
+  }
+
+  .tier-price {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+}
+
+.swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  flex: none;
+}
+
+.mobile-position-note {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  background: var(--panel-2);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.6rem;
+
+  b {
+    color: var(--ink);
+  }
+}
+
+@media (max-width: 640px) {
+  .ladder-track {
+    display: none;
+  }
+
+  .ladder-mobile {
+    display: flex;
+  }
+}
+
+/* target summary */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.stat {
+  background: var(--panel-2);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+
+  .k {
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  .v {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &.hero {
+    grid-column: span 1;
+    background: var(--accent-dim);
+
+    .v {
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+  }
+}
+
+/* metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 860px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- AI suggestion card ---- */
+/* .ai-text／.ai-meta 已抽到全域 styles.scss（跟體質檢視頁共用）；這裡只留這個頁面需要的
+   .layout 下方獨立區塊位置間距。 */
+.ai-card {
+  margin-top: 1.25rem;
+}
+
+.price-chart-card {
+  margin-top: 1.25rem;
+}
+
+.chart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 { margin-bottom: 0.2rem; }
+  span, .chart-range { color: var(--ink-dim); font-size: 0.78rem; }
+  .chart-range { font-family: var(--mono); }
+}
+
+.chart-state {
+  min-height: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--ink-dim);
+  &.error { color: var(--bad); }
+}
+
+.chart-layout {
+  display: grid;
+  grid-template-columns: 3.8rem minmax(0, 1fr);
+}
+
+.price-axis {
+  position: relative;
+  height: 19rem;
+  margin-top: 0.5rem;
+  border-right: 1px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+
+  span { position: absolute; right: 0.45rem; transform: translateY(-50%); }
+  span:first-child { transform: none; }
+  span:last-child { transform: translateY(-100%); }
+}
+
+.candlestick-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+}
+
+.chart-scroll-content {
+  min-width: 100%;
+  width: max-content;
+}
+
+.candlestick-chart {
+  display: grid;
+  grid-template-columns: repeat(var(--candle-count), 7px);
+  gap: 2px;
+  min-width: 100%;
+  height: 19rem;
+  padding: 0.5rem 0;
+  border-block: 1px solid var(--hair);
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 24%, var(--hair) 25%);
+}
+
+.time-axis {
+  position: relative;
+  height: 1.6rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+
+  span { position: absolute; top: 0.35rem; transform: translateX(-50%); white-space: nowrap; }
+  span:first-child { transform: none; }
+  span:last-child { transform: translateX(-100%); }
+}
+
+.candle {
+  position: relative;
+  height: 100%;
+  outline: none;
+}
+
+.chart-tooltip {
+  height: 6.4rem;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+
+  &.visible {
+    border-color: var(--hair);
+    background: var(--panel-2);
+    color: var(--ink);
+  }
+}
+.wick { position: absolute; left: 3px; width: 1px; background: var(--ink-dim); }
+.body { position: absolute; left: 1px; width: 5px; min-height: 2px; border-radius: 1px; }
+.body.rising { background: #ef5350; }
+.body.falling { background: #26a69a; }
+
+.chart-legend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink-dim);
+  font-size: 0.72rem;
+  .up, .down { width: 0.6rem; height: 0.6rem; border-radius: 2px; margin-left: 0.5rem; }
+  .up { background: #ef5350; }
+  .down { background: #26a69a; }
+}
+
+@media (max-width: 640px) {
+  .candlestick-chart { height: 15rem; }
+  .price-axis { height: 15rem; }
+  .chart-layout { grid-template-columns: 3.3rem minmax(0, 1fr); }
+  .chart-heading { align-items: end; }
+}
+
+footer.note {
+  margin-top: 2rem;
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--hair);
+  padding-top: 1rem;
+}

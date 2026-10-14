@@ -1,0 +1,40 @@
+<main class="favorite-update-page">
+  <section class="panel heading">
+    <div><h1>我的最愛區</h1><p>一次同步所有收藏股票的最新估值與財報季度。</p></div>
+    <button type="button" class="btn primary" [disabled]="loading()" (click)="refreshAll()">
+      {{ loading() ? '更新中…' : '更新全部' }}
+    </button>
+  </section>
+
+  @if (error()) { <div class="message error">{{ error() }}</div> }
+  <section class="panel table-wrap">
+    @if (!rows().length && !loading()) {
+      <div class="empty">按下「更新全部」開始同步我的最愛。</div>
+    } @else {
+      <table>
+        <thead><tr><th>股票代號</th><th>股票名稱</th><th>最新股價</th><th>目標股價</th><th>差距 (%)</th><th>最新資料季度</th><th>投資策略</th><th>連結</th></tr></thead>
+        <tbody>
+          @for (row of rows(); track row.stockId) {
+            <tr>
+              <td>{{ row.stockId }}</td>
+              <td><a [routerLink]="['/target-price', row.stockId]">{{ row.stockName }}</a></td>
+              <td>{{ row.latestPrice == null ? '—' : (row.latestPrice | number:'1.0-2') }}</td>
+              <td>
+                {{ row.targetPrice == null ? '—' : (row.targetPrice | number:'1.0-2') }}
+                @if (row.targetPriceLabel) { <span class="target-label">（{{ row.targetPriceLabel }}）</span> }
+              </td>
+              <td
+                [class.error]="row.errorMessage"
+                [class.positive-gap]="row.gapRatio != null && row.gapRatio > 0"
+                [class.negative-gap]="row.gapRatio != null && row.gapRatio < 0"
+              >{{ row.gapRatio == null ? '—' : ((row.gapRatio * 100) | number:'1.1-2') + '%' }}</td>
+              <td>{{ row.latestDataQuarter ?? '—' }}</td>
+              <td>{{ row.errorMessage ?? row.investmentStrategy ?? '—' }}</td>
+              <td><a class="goodinfo-link" [href]="goodinfoUrl(row.stockId)" target="_blank" rel="noopener noreferrer">Goodinfo ↗</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</main>

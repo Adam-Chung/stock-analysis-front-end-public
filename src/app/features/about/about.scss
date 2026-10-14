@@ -1,0 +1,181 @@
+.about {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.about-hero {
+  margin-bottom: 1.75rem;
+
+  h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.9rem;
+    font-weight: 700;
+  }
+}
+
+.tagline {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 1rem;
+}
+
+.about-card {
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  h3 {
+    margin: 0.2rem 0 0.9rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0 0 0.75rem;
+    color: var(--ink-dim);
+    line-height: 1.75;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--ink-dim);
+    line-height: 1.9;
+  }
+}
+
+.formula-list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.formula-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+
+  dt {
+    flex: 0 0 auto;
+    min-width: 9rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  dd {
+    flex: 1 1 260px;
+    margin: 0;
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+}
+
+.report-schedule-table-wrapper {
+  overflow-x: auto;
+}
+
+.investing-steps-table-wrapper {
+  overflow-x: auto;
+}
+
+.investing-steps-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.9rem;
+    border-bottom: 1px solid var(--hair);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    padding-top: 0;
+    color: var(--ink-dim);
+    font-size: 0.8rem;
+  }
+
+  tbody th {
+    width: 10rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    color: var(--ink-dim);
+    line-height: 1.7;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  a {
+    margin-left: 0.4rem;
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.report-schedule-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  color: var(--ink);
+
+  th,
+  td {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--hair);
+    text-align: left;
+  }
+
+  thead th {
+    padding-top: 0;
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+  }
+
+  tbody th,
+  tbody td {
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.disclaimer {
+  margin: 1.5rem 0 0;
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+  opacity: 0.75;
+  text-align: center;
+}

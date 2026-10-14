@@ -1,0 +1,184 @@
+/* Ported from prototype/stock-health-prototype.html (already reviewed with the user). */
+
+/* .btn／.btn.small 已抽到全域 styles.scss，兩頁與這個子元件共用同一份定義。 */
+
+.category {
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 1.3rem;
+  cursor: pointer;
+  user-select: none;
+}
+@media (max-width: 640px) {
+  .category-header {
+    padding: 0.85rem 1rem;
+  }
+}
+.category-header:hover {
+  background: var(--panel-2);
+}
+.category-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+.category-title .name {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.category-title .threshold {
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+}
+.category-toggle {
+  flex: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--hair);
+  background: var(--panel-2);
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  transition: transform 0.15s ease;
+}
+.category.collapsed .category-toggle {
+  transform: rotate(-90deg);
+}
+.category-body {
+  padding: 0 1.3rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 640px) {
+  .category-body {
+    padding: 0 1rem 1rem;
+  }
+}
+.category.collapsed .category-body {
+  display: none;
+}
+
+.badge {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.badge.pass {
+  background: var(--good-bg);
+  color: var(--good);
+}
+.badge.fail {
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+.badge.judgment {
+  background: color-mix(in srgb, var(--accent) 16%, var(--panel-2));
+  color: var(--accent);
+}
+.badge.na {
+  background: var(--panel-2);
+  color: var(--ink-dim);
+}
+
+.metric-row {
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--hair);
+}
+.metric-row:first-child {
+  border-top: none;
+  padding-top: 0.2rem;
+}
+.metric-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.metric-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.metric-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.metric-threshold {
+  font-size: 0.74rem;
+  color: var(--ink-dim);
+}
+
+.quarter-strip {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.quarter-chip {
+  flex: 0 0 auto;
+  min-width: 4.6rem;
+  background: var(--panel-2);
+  border-radius: 8px;
+  padding: 0.4rem 0.55rem;
+  text-align: center;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+@media (max-width: 480px) {
+  .quarter-chip {
+    min-width: 4rem;
+    padding: 0.35rem 0.45rem;
+  }
+}
+.quarter-chip.current {
+  background: var(--accent-dim);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.quarter-chip .q-label {
+  font-size: 0.66rem;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.quarter-chip .q-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-top: 0.1rem;
+}
+.quarter-chip.pass .q-value {
+  color: var(--good);
+}
+.quarter-chip.fail .q-value {
+  color: var(--bad);
+}
+
+/* .metric-note 系列（label／.hint／-row／textarea／:focus／.note-save-btn）已抽到全域
+   styles.scss，這裡只加這個元件需要的「不達標時 textarea 邊框變紅」修飾。 */
+.metric-row.fail .metric-note textarea {
+  border-color: color-mix(in srgb, var(--bad) 55%, var(--hair));
+}
+
+.metric-empty {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  font-style: italic;
+}

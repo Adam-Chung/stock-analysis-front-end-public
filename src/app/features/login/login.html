@@ -1,0 +1,11 @@
+<main class="login-page">
+  <form class="login-card" (ngSubmit)="submit()">
+    <h1>💰 存股分析</h1>
+    <p>請先登入以使用網站功能</p>
+    <label>帳號<input name="username" autocomplete="username" [ngModel]="username()" (ngModelChange)="username.set($event)" /></label>
+    <label>密碼<input name="password" type="password" autocomplete="current-password" [ngModel]="password()" (ngModelChange)="password.set($event)" /></label>
+    @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+    <button type="submit" [disabled]="loading()">{{ loading() ? '登入中…' : '登入' }}</button>
+  </form>
+</main>
+

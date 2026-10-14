@@ -1,0 +1,350 @@
+@if (!loaded() && !loadError()) {
+  <div class="screen-state" role="status">正在載入股票資料…</div>
+} @else if (loadError()) {
+  <div class="screen-state error" role="alert">
+    <p>{{ loadError() }}</p>
+    <button type="button" class="btn primary" (click)="loadStock(stockId())">重新載入</button>
+  </div>
+} @else {
+  <div class="app">
+    <h1 class="page-title">股票目標價</h1>
+    @if (actionMessage()) {
+      <div class="action-message" role="status">{{ actionMessage() }}</div>
+    }
+
+    <header class="topbar">
+      <div class="stock-head">
+        <span class="stock-id">{{ stockId() }}</span>
+        <span class="stock-name"
+          >{{ stockName() }}<span class="industry-tag">・{{ industryCategory() }}</span></span
+        >
+      </div>
+      <app-favorite-toggle
+        [stockId]="stockId()"
+        [stockName]="stockName()"
+        [industryCategory]="industryCategory()"
+        (error)="actionMessage.set($event)"
+      />
+      <a class="cross-page-link" [routerLink]="['/health-check', stockId()]" title="查看這支股票的企業體質檢視">
+        📝 查看體質檢視
+      </a>
+      <div class="chip" [class.bad]="isExpensive()" [class.good]="!isExpensive()">
+        {{ isExpensive() ? '貴' : '便宜' }} {{ gapPercentAbs() | number: '1.1-1' }}%
+      </div>
+      <div class="price-group">
+        <div class="price-block target">
+          <span class="price-label">目標價</span>
+          <span class="price-value">NT$ {{ targetPrice() | number: '1.0-2' }}</span>
+        </div>
+        <div class="price-divider"></div>
+        <div class="price-block">
+          <span class="price-label">目前成交價</span>
+          <span class="price-value">NT$ {{ currentPrice() | number: '1.0-2' }}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="update-bar">
+      <span>上次更新時間：<b>{{ displayedLastUpdated() }}</b></span>
+      <button type="button" class="btn primary" [disabled]="refreshing()" (click)="onRefresh()">
+        {{ refreshing() ? '更新中…' : '🔄 更新' }}
+      </button>
+    </div>
+
+    <div class="layout">
+      <aside class="panel settings-panel">
+        <h2>設定</h2>
+
+        <div class="field">
+          <label for="strategy">投資策略</label>
+          <textarea
+            id="strategy"
+            [ngModel]="investmentStrategy()"
+            (ngModelChange)="investmentStrategy.set($event)"
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="targetSelect">目標價選擇</label>
+          <select
+            id="targetSelect"
+            [ngModel]="targetPriceLevel()"
+            (ngModelChange)="targetPriceLevel.set($event)"
+          >
+            @for (tier of tiers(); track tier.n) {
+              <option [ngValue]="tier.n">{{ tier.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="subsection" [class.collapsed]="valuationCollapsed()">
+          <div class="subsection-header">
+            <h3>估值設定</h3>
+            <button
+              type="button"
+              class="subsection-toggle-btn"
+              (click)="toggleValuationCollapsed()"
+              aria-label="展開／收合估值設定"
+            >
+              ▾
+            </button>
+          </div>
+          <div class="subsection-body">
+            <div class="row-2">
+              <div class="field">
+                <label for="epsYears">EPS取X年平均</label>
+                <select
+                  id="epsYears"
+                  [ngModel]="epsAvgYears()"
+                  (ngModelChange)="onEpsYearsChange($event)"
+                >
+                  <option [ngValue]="0">不參考</option>
+                  <option [ngValue]="3">3 年</option>
+                  <option [ngValue]="5">5 年</option>
+                  <option [ngValue]="10">10 年</option>
+                </select>
+                <a
+                  class="btn valuation-link"
+                  [href]="goodinfoPerUrl()"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  本益比河流圖
+                </a>
+              </div>
+              <div class="field">
+                <label for="bpsYears">BPS取X年平均</label>
+                <select
+                  id="bpsYears"
+                  [ngModel]="bpsAvgYears()"
+                  (ngModelChange)="onBpsYearsChange($event)"
+                >
+                  <option [ngValue]="0">不參考</option>
+                  <option [ngValue]="3">3 年</option>
+                  <option [ngValue]="5">5 年</option>
+                  <option [ngValue]="10">10 年</option>
+                </select>
+                <a
+                  class="btn valuation-link"
+                  [href]="goodinfoPbrUrl()"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  本淨比河流圖
+                </a>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="settingNote"
+                >設定備註 <span class="hint">系統預帶，可自行編輯覆蓋</span></label
+              >
+              <textarea
+                id="settingNote"
+                [ngModel]="settingNote()"
+                (ngModelChange)="onSettingNoteInput($event)"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn primary save-settings"
+          [class.settings-collapsed]="valuationCollapsed()"
+          [disabled]="savingSettings()"
+          (click)="onSaveSettings()"
+        >
+          {{ savingSettings() ? '儲存中…' : '儲存設定' }}
+        </button>
+      </aside>
+
+      <main class="main-canvas">
+        <section class="panel">
+          <h2>目標價價位帶（10年低 → 10年高）</h2>
+
+          <div class="ladder-track">
+            <span class="range-label low">10年低 {{ low10() | number: '1.0-2' }}</span>
+            <span class="range-label high">10年高 {{ high10() | number: '1.0-2' }}</span>
+
+            @for (t of tierTicks(); track t.n) {
+              <div class="tick" [class.selected]="t.n === targetPriceLevel()" [style.left.%]="t.pct"></div>
+              <div class="tick-label" [class.row-1]="t.row === 1" [style.left.%]="t.pct">
+                {{ t.label }}<b>{{ t.value | number: '1.0-2' }}</b>
+              </div>
+            }
+
+            <div class="current-pin" [style.left.%]="currentPct()">
+              <span class="flag">現價 {{ currentPrice() | number: '1.0-2' }}</span>
+              <span class="stem"></span>
+            </div>
+          </div>
+
+          <div class="ladder-mobile">
+            <div class="tier-row range-row">
+              <span class="swatch range-swatch"></span>
+              <span class="tier-name">10年高</span>
+              <span class="tier-price">NT$ {{ high10() | number: '1.0-2' }}</span>
+            </div>
+            @for (row of mobileRows(); track $index) {
+              @if (row.type === 'note') {
+                <div class="mobile-position-note">
+                  目前成交價 <b>NT$ {{ currentPrice() | number: '1.0-2' }}</b> 落在此位置
+                </div>
+              } @else {
+                <div class="tier-row" [class.selected]="row.tier.n === targetPriceLevel()">
+                  <span class="swatch" [style.background]="tierColor(row.tier.n)"></span>
+                  <span class="tier-name">{{ row.tier.label }}</span>
+                  <span class="tier-price">NT$ {{ row.tier.value | number: '1.0-2' }}</span>
+                </div>
+              }
+            }
+            <div class="tier-row range-row">
+              <span class="swatch range-swatch"></span>
+              <span class="tier-name">10年低</span>
+              <span class="tier-price">NT$ {{ low10() | number: '1.0-2' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>目標價結果</h2>
+          <div class="summary-grid">
+            <div class="stat hero">
+              <div class="k">目標價</div>
+              <div class="v"> {{ targetPrice() | number: '1.0-2' }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">加一年股利價</div>
+              <div class="v"> {{ plusOneYearDividendPrice() | number: '1.0-2' }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">X年內買回</div>
+              <div class="v">
+                @if (yearsToRecover() === null) {
+                  0／已達成
+                } @else {
+                  {{ yearsToRecover() | number: '1.1-1' }} 年
+                }
+              </div>
+            </div>
+            <div class="stat">
+              <div class="k">前目標價出現</div>
+              <div class="v">
+                @if (frontYear() === null) {
+                  近10年無符合年度
+                } @else {
+                  {{ frontYear() }}
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>其他市場指標</h2>
+          <div class="metrics-grid">
+            <div class="stat">
+              <div class="k">十年平均殖利率</div>
+              <div class="v">{{ yieldPercent() | number: '1.1-1' }}%</div>
+            </div>
+            <div class="stat">
+              <div class="k">股利發日（除息日）</div>
+              <div class="v" style="font-size: 1rem">{{ dividendDate() }}</div>
+            </div>
+            <div class="stat">
+              <div class="k">賣賺幾年</div>
+              <div class="v">
+                @if (yearsOfProfitIfSold() === null) {
+                  尚未獲利
+                } @else {
+                  {{ yearsOfProfitIfSold() | number: '1.1-1' }} 年
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <section class="panel ai-card">
+      <h2>AI 投資建議</h2>
+      <div class="ai-text">{{ aiText() }}</div>
+      <div class="ai-meta">
+        <span>上次更新時間：<b>{{ displayedAiUpdatedAt() }}</b></span>
+        <button
+          type="button"
+          class="btn primary"
+          [disabled]="aiLoading()"
+          [attr.aria-busy]="aiLoading()"
+          (click)="onRequestAiSuggestion()"
+        >
+          {{ aiLoading() ? 'AI 分析中…' : aiUpdatedAt() ? '重新產生 AI 建議' : '產生 AI 建議' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="panel price-chart-card">
+      <div class="chart-heading">
+        <div>
+          <h2>股價 K 線圖</h2>
+          <span>週線・近三年</span>
+        </div>
+        @if (weeklyPrices().length) {
+          <div class="chart-range">{{ chartLow() | number: '1.0-2' }} ～ {{ chartHigh() | number: '1.0-2' }}</div>
+        }
+      </div>
+      @if (chartLoading()) {
+        <div class="chart-state">正在載入週 K 資料…</div>
+      } @else if (chartError()) {
+        <div class="chart-state error">
+          {{ chartError() }}
+          <button type="button" class="btn" (click)="loadWeeklyPrices(stockId())">重新載入</button>
+        </div>
+      } @else if (!weeklyPrices().length) {
+        <div class="chart-state">請按上方「更新」載入近三年週 K。</div>
+      } @else {
+        <div class="chart-tooltip" [class.visible]="hoveredCandle()">
+          {{ hoveredCandle() ? candleTooltip(hoveredCandle()!) : '將滑鼠移到 K 棒上查看日期與價格' }}
+        </div>
+        <div class="chart-layout">
+          <div class="price-axis" aria-label="股價縱軸">
+            @for (tick of chartPriceTicks(); track tick.top) {
+              <span [style.top.%]="tick.top">{{ tick.value | number: '1.0-2' }}</span>
+            }
+          </div>
+          <div class="candlestick-scroll" aria-label="近三年股價週 K 線圖">
+            <div class="chart-scroll-content">
+              <div class="candlestick-chart" [style.--candle-count]="weeklyPrices().length">
+                @for (candle of chartCandles(); track candle.weekStart) {
+                  <div
+                    class="candle"
+                    tabindex="0"
+                    [attr.aria-label]="candleTooltip(candle)"
+                    [attr.data-tooltip]="candleTooltip(candle)"
+                    (mouseenter)="hoveredCandle.set(candle)"
+                    (mouseleave)="hoveredCandle.set(null)"
+                    (focus)="hoveredCandle.set(candle)"
+                    (blur)="hoveredCandle.set(null)"
+                  >
+                    <span class="wick" [style.top.%]="candle.wickTop" [style.height.%]="candle.wickHeight"></span>
+                    <span class="body" [class.rising]="candle.rising" [class.falling]="!candle.rising" [style.top.%]="candle.bodyTop" [style.height.%]="candle.bodyHeight"></span>
+                  </div>
+                }
+              </div>
+              <div class="time-axis" aria-label="日期橫軸">
+                @for (tick of chartTimeTicks(); track tick.left) {
+                  <span [style.left.%]="tick.left">{{ tick.label }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-legend"><span class="up"></span>上漲／平盤 <span class="down"></span>下跌</div>
+      }
+    </section>
+
+    <footer class="note">
+      欄位對應 SA-01 / SA-02 / DB-01 規格文件。市場與估值資料由後端 API 提供。
+    </footer>
+  </div>
+}

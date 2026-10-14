@@ -1,0 +1,74 @@
+<div class="category" [class.collapsed]="collapsed()">
+  <div class="category-header" (click)="toggleCollapsed()">
+    <div class="category-title">
+      <span class="name">{{ category().name }}</span>
+      <span class="threshold">{{ category().thresholdDescription }}</span>
+    </div>
+    @let counts = passFailCount();
+    <span
+      class="badge"
+      [class.pass]="counts.evaluated > 0 && counts.pass === counts.evaluated"
+      [class.judgment]="counts.evaluated > 0 && counts.pass < counts.evaluated"
+      [class.na]="counts.evaluated === 0"
+    >
+      {{ counts.evaluated > 0 ? counts.pass + ' / ' + counts.evaluated + ' 項達標' : '判斷／參考項目' }}
+    </span>
+    <span class="category-toggle">▾</span>
+  </div>
+
+  <div class="category-body">
+    @for (metric of category().metrics; track metric.key) {
+      @let latest = latestPeriod(metric);
+      @let status = latest?.status ?? 'NA';
+      <div class="metric-row" [class.fail]="status === 'FAIL'">
+        <div class="metric-head">
+          <div class="metric-name-block">
+            <span class="metric-name">{{ metric.name }}</span>
+            @if (metric.thresholdLabel) {
+              <span class="metric-threshold">{{ metric.thresholdLabel }}</span>
+            }
+          </div>
+          <span class="badge" [class.pass]="status === 'PASS'" [class.fail]="status === 'FAIL'"
+                [class.judgment]="status === 'JUDGMENT'" [class.na]="status === 'NA'">
+            {{ statusLabel[status] }}
+          </span>
+        </div>
+
+        @if (metric.periods.length > 0) {
+          <div class="quarter-strip">
+            @for (p of metric.periods; track p.period; let isFirst = $first) {
+              <div class="quarter-chip" [class.current]="isFirst" [class.pass]="p.status === 'PASS'" [class.fail]="p.status === 'FAIL'">
+                <div class="q-label">{{ periodLabel(metric, p.period) }}{{ isFirst ? '（最新）' : '' }}</div>
+                <div class="q-value">{{ fmt(metric, p.value) }}</div>
+              </div>
+            }
+          </div>
+
+          <div class="metric-note">
+            <label>
+              最新一期（{{ periodLabel(metric, latest!.period) }}）筆記
+              <span class="hint">（{{ status === 'FAIL' ? '未達標，建議記錄原因' : '選填' }}）</span>
+            </label>
+            <div class="metric-note-row">
+              <textarea
+                [ngModel]="currentNote(metric)"
+                (ngModelChange)="onNoteInput(metric, $event)"
+                placeholder="例如：業外收益暫時拉高，下一季追蹤是否回落…"
+              ></textarea>
+              <button
+                type="button"
+                class="btn small note-save-btn"
+                [disabled]="isSaving(metric)"
+                (click)="onSaveNoteClick(metric)"
+              >
+                {{ isSaving(metric) ? '儲存中…' : '儲存' }}
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="metric-empty">尚無資料——可點擊上方「更新本季資料」同步，或等後續資料到位後再查看。</div>
+        }
+      </div>
+    }
+  </div>
+</div>
