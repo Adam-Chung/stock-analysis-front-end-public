@@ -23,7 +23,7 @@ npm start
 ```powershell
 npm test -- --no-watch
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=moderate
 ```
 
 Public 的 `src/environments/environment.ts` 固定為 mock mode 與 localhost API URL，不包含正式後端位置。

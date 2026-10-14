@@ -8,7 +8,7 @@
 npm ci
 npm test -- --no-watch
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=moderate
 ```
 
 請勿提交真實憑證、production URL、個人資料、第三方完整內容、未獲授權的資料 fixture 或部署設定。
