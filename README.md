@@ -1,22 +1,64 @@
-# Stock Analysis Frontend — Public Portfolio Mirror
+# Stock Analysis Frontend
 
-這是台股分析網站前端的去營運化 Public mirror，展示 Angular Signals、responsive layout、估值互動、搜尋／收藏與 API service 分層。Private repository 才是唯一開發與營運來源；此 repository 不含 Private Git history、production URL、runtime state 或真實憑證，也不會自動反向同步。
+以 Angular 建立的台股分析介面，將目標價估值、企業財務體質、股價趨勢、股票搜尋與收藏整合成 responsive 單頁應用程式。畫面狀態以 Signals 管理，資料存取集中在 feature service，並可在 mock data 與 REST API 之間切換。
 
-## 功能與技術
+## 核心功能
 
-- Angular 21、TypeScript、Signals、SCSS、PrimeNG。
-- 股票目標價、企業體質檢視、搜尋、收藏與 AI 建議互動。
-- 桌面側欄、手機漢堡選單與 responsive 估值版面。
-- service 層可切換 mock 與真實 API；Public 預設強制使用 mock mode。
+- **目標價分析**：呈現六段估值價位、目前價格差距、近十年高低點、殖利率與週 K 線趨勢。
+- **企業體質檢視**：依一般企業或銀行模板顯示財務指標、近五季數值、達標狀態與使用者筆記。
+- **股票搜尋與收藏**：可依代號或名稱搜尋、切換收藏狀態，並在獨立頁面批次更新收藏股票。
+- **按需 AI 建議**：由使用者主動觸發目標價或企業體質建議，畫面同時顯示上次更新時間。
+- **Responsive layout**：提供桌面側欄、手機漢堡選單及適應不同寬度的估值與財務資料版面。
+- **Mock mode**：內建股票、估值、週 K、企業體質與收藏資料，不連接後端也能瀏覽主要流程。
+
+## 前端架構
+
+```mermaid
+flowchart LR
+    User[User] --> Shell[App shell and router]
+    Shell --> Features[Feature components]
+    Features --> State[Signals and computed state]
+    Features --> Data[Feature data services]
+    Data --> Mock[Mock data]
+    Data --> HTTP[Angular HttpClient]
+    HTTP --> API[Stock Analysis REST API]
+    Core[Auth / Search / Favorites / Interceptors] --> Shell
+    Core --> Data
+```
+
+- **App shell**：負責 responsive navigation、全域股票搜尋、收藏清單與路由出口。
+- **Feature components**：目標價、企業體質、收藏更新、登入與專案介紹各自維持畫面責任。
+- **Signals**：管理 loading、展開狀態、表單值與衍生估值顯示；`computed` 集中處理 UI 衍生資料。
+- **Data services**：統一 feature 的 HTTP 呼叫、mock 分支及 API response 到 view model 的轉換。
+- **Core services**：集中處理驗證、股票搜尋、收藏狀態與 correlation-aware API logging。
+
+## 頁面路由
+
+| 路徑 | 功能 |
+|---|---|
+| `/target-price/:stockId` | 股票目標價與週 K 分析 |
+| `/health-check/:stockId` | 企業財務體質檢視 |
+| `/favorite-update` | 收藏股票批次更新 |
+| `/about` | 分析流程與使用說明 |
+| `/login` | 單一使用者原型登入 |
+
+## 技術棧
+
+- Angular 21、TypeScript 5.9
+- Angular Signals、Router、HttpClient
+- PrimeNG、PrimeIcons、SCSS
+- Vitest、jsdom
 
 ## 本機執行
 
-需求：相容的 Node.js 與 npm。
+需求：Node.js 與 npm。
 
 ```powershell
 npm ci
 npm start
 ```
+
+開啟 `http://localhost:4200`。預設環境設定啟用 `useMockApi: true`，因此不需要後端或真實憑證即可操作主要頁面。
 
 驗證：
 
@@ -26,18 +68,17 @@ npm run build
 npm audit --audit-level=moderate
 ```
 
-Public 的 `src/environments/environment.ts` 固定為 mock mode 與 localhost API URL，不包含正式後端位置。
+## 設定與限制
 
-## 安全與部署限制
+- 如需連接 REST API，請將環境設定的 `useMockApi` 關閉，並把 `apiBaseUrl` 指向自己的後端服務。
+- 現有 browser token storage 與 simple auth 是單一使用者原型，不符合 production 安全要求，不應直接暴露於公網。
+- Mock data 只用於展示互動與版面，不代表即時市場或財務資訊。
+- AI 與財務分析內容僅供研究參考，不構成投資建議。
 
-- 這份 mirror 僅供程式碼審閱與學習，未提供 production deployment workflow。
-- 現有 browser token storage 與對應的 simple auth 是單一使用者原型，不符合 production 安全要求；不可直接部署或暴露於公網。
-- Public mirror 不含 production domain、帳號、token、部署設定或 Private agent state。
+## 資料使用責任
 
-## 第三方資料責任
-
-畫面可呈現由後端取得的市場、財務與 AI 內容，但 Public mirror 不內建真實資料或來源憑證。使用者在連接任何來源前，必須自行確認目前的 Terms of Service、API 或資料 License、robots.txt、rate limit、attribution、隱私、AI processing 與再散布限制。公開可存取或技術上能連線，不代表已取得合法授權；若授權不明，應維持停用。
+畫面連接後端後可呈現市場、財務與 AI 內容。啟用任何第三方資料來源前，使用者必須自行確認目前的 Terms of Service、API 或資料 License、robots.txt、rate limit、attribution、隱私、AI processing 與再散布限制。可公開存取不代表已取得使用授權；授權不明時應維持停用。
 
 ## No License
 
-目前未授予本 repository 內容的使用、修改或散布授權。Public visibility 不等於 Open Source，也不授予商業或非商業重用權。正式 License 仍由 repository owner 決定。
+目前未授予本 repository 內容的使用、修改或散布權利。尚未提供正式 `LICENSE`；任何重用前請先取得 repository owner 的許可。
