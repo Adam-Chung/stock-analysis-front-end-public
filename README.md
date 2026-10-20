@@ -2,6 +2,8 @@
 
 以 Angular 建立的台股分析介面，將目標價估值、企業財務體質、股價趨勢、股票搜尋與收藏整合成 responsive 單頁應用程式。畫面狀態以 Signals 管理，資料存取集中在 feature service，並可在 mock data 與 REST API 之間切換。
 
+搭配的 Spring Boot 後端請參閱 [`stock-analysis-back-end-public`](https://github.com/Adam-Chung/stock-analysis-back-end-public)。
+
 ## 核心功能
 
 - **目標價分析**：呈現六段估值價位、目前價格差距、近十年高低點、殖利率與週 K 線趨勢。
@@ -79,6 +81,6 @@ npm audit --audit-level=moderate
 
 畫面連接後端後可呈現市場、財務與 AI 內容。啟用任何第三方資料來源前，使用者必須自行確認目前的 Terms of Service、API 或資料 License、robots.txt、rate limit、attribution、隱私、AI processing 與再散布限制。可公開存取不代表已取得使用授權；授權不明時應維持停用。
 
-## No License
+## License
 
-目前未授予本 repository 內容的使用、修改或散布權利。尚未提供正式 `LICENSE`；任何重用前請先取得 repository owner 的許可。
+本 repository 採用自訂的 [Non-Commercial Personal Use License 1.0](LICENSE)，僅允許個人基於非商業目的下載、執行及私人修改。禁止商業使用、收費代管，以及散布原始或修改後的版本。本專案屬於 source-available software，並非 Open Source software。
