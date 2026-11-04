@@ -7,6 +7,10 @@ import { catchError, throwError } from 'rxjs';
 /** 對登入以外的後端請求附加 Bearer Token。 */
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(AuthService);
+  if (!auth.enabled) {
+    return next(request);
+  }
+
   const router = inject(Router);
   const token = auth.token();
   return next(token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request).pipe(

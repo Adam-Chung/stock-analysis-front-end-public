@@ -9,19 +9,24 @@ import { of } from 'rxjs';
 
 describe('App', () => {
   beforeEach(async () => {
-    localStorage.setItem('stock-analysis-token', 'test-token');
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
   });
 
-  afterEach(() => localStorage.clear());
-
   it('should create the app', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('shows the application without a token when authentication is disabled', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.shell')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('.logout-button')).toBeNull();
   });
 
   it('starts with the favorites sidebar visible', () => {

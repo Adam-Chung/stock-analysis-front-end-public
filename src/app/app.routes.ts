@@ -5,9 +5,12 @@ import { About } from './features/about/about';
 import { FavoriteUpdate } from './features/favorite-update/favorite-update';
 import { Login } from './features/login/login';
 import { authGuard } from './core/auth.guard';
+import { environment } from '../environments/environment';
 
 export const routes: Routes = [
-  { path: 'login', component: Login, title: '登入' },
+  environment.authEnabled
+    ? { path: 'login', component: Login, title: '登入' }
+    : { path: 'login', redirectTo: 'target-price/2330' },
   { path: '', redirectTo: 'target-price/2330', pathMatch: 'full' },
   { path: 'target-price/:stockId', component: TargetPrice, canActivate: [authGuard], title: '股票目標價' },
   { path: 'health-check/:stockId', component: HealthCheck, canActivate: [authGuard], title: '企業體質檢視' },

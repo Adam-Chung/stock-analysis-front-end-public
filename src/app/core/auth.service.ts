@@ -9,7 +9,8 @@ const TOKEN_KEY = 'stock-analysis-token';
 export class AuthService {
   private readonly http = inject(HttpClient);
   readonly token = signal(localStorage.getItem(TOKEN_KEY));
-  readonly loggedIn = computed(() => environment.useMockApi || this.token() !== null);
+  readonly enabled = environment.authEnabled;
+  readonly loggedIn = computed(() => !this.enabled || environment.useMockApi || this.token() !== null);
 
   /** 驗證帳密並永久保存登入 Token。 */
   login(username: string, password: string) {

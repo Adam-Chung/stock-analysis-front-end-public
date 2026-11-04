@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 
@@ -14,7 +14,7 @@ import { authInterceptor } from './core/auth.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([authInterceptor, apiLoggingInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor, apiLoggingInterceptor])),
     // withComponentInputBinding() lets route params (e.g. :stockId) bind straight to a
     // matching input() on the routed component, no ActivatedRoute plumbing needed.
     provideRouter(routes, withComponentInputBinding()),
@@ -26,5 +26,5 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-  ]
+  ],
 };
