@@ -10,9 +10,10 @@ type MobileRow = { type: 'tier'; tier: TargetPriceTier } | { type: 'note' };
 type AvgYears = 0 | 3 | 5 | 10;
 
 /**
- * SA-01「股票目標價」畫面。Ported from prototype/target-price-prototype.html (this repo) -
- * the visual design/behaviour there has already been through several review rounds with the
- * user, so this keeps the same CSS/structure rather than re-styling with PrimeNG defaults.
+ * SA-01「股票目標價」畫面。
+ *
+ * 視覺設計與互動由本 repository 的 `prototype/target-price-prototype.html` 移植，並保留已經過
+ * 多輪確認的 HTML 結構與自訂樣式，避免因更換第三方 UI library 而改變既有行為。
  */
 @Component({
   selector: 'app-target-price',

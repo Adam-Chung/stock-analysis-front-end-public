@@ -71,7 +71,7 @@ flowchart LR
 
 - Angular 22、TypeScript 6.0
 - Angular Signals、Router、HttpClient
-- PrimeNG、PrimeIcons、SCSS
+- SCSS
 - Vitest、jsdom
 
 ## 本機執行
