@@ -5,7 +5,9 @@
     <p>最後更新：2026 年 11 月 13 日</p>
     <nav aria-label="公開頁面">
       <a routerLink="/about">關於本站</a>
-      <a routerLink="/login">前往登入</a>
+      @if (!authService.loggedIn()) {
+        <a routerLink="/login">前往登入</a>
+      }
     </nav>
   </header>
 

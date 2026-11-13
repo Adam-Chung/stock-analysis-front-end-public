@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 
 /** 公開隱私權政策頁；不需登入且不呼叫任何 API。 */
 @Component({
@@ -9,4 +10,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './privacy.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Privacy {}
+export class Privacy {
+  protected readonly authService = inject(AuthService);
+}
