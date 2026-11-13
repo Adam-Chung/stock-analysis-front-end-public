@@ -44,8 +44,8 @@ flowchart LR
 
 - **App shell**：負責 responsive navigation、全域股票搜尋、收藏清單與路由出口。<br>
   **App shell**: Handles responsive navigation, global stock search, the favorites list, and the router outlet.
-- **Feature components**：目標價、企業體質、收藏更新與專案介紹各自維持畫面責任；原型登入程式目前預設停用並保留供後續擴充。<br>
-  **Feature components**: Keep target-price analysis, company health checks, favorite updates, and project information in separate UI responsibilities. Prototype login code is currently disabled by default and retained for future extension.
+- **Feature components**：目標價、企業體質、收藏更新、帳號管理與專案介紹各自維持畫面責任；Public mock mode 預設停用 Google 登入且不聯絡 Google。<br>
+  **Feature components**: Keep target-price analysis, company health checks, favorite updates, account management, and project information in separate UI responsibilities. Public mock mode disables Google sign-in by default and does not contact Google.
 - **Signals**：管理 loading、展開狀態、表單值與衍生估值顯示；`computed` 集中處理 UI 衍生資料。<br>
   **Signals**: Manage loading, expanded states, form values, and derived valuation displays, while `computed` centralizes derived UI data.
 - **Data services**：統一 feature 的 HTTP 呼叫、mock 分支及 API response 到 view model 的轉換。<br>
@@ -62,8 +62,10 @@ flowchart LR
 | `/target-price/:stockId` | 股票目標價與週 K 分析<br>Stock target-price and weekly candlestick analysis |
 | `/health-check/:stockId` | 企業財務體質檢視<br>Company financial health check |
 | `/favorite-update` | 收藏股票批次更新<br>Batch update for favorite stocks |
-| `/about` | 分析流程與使用說明<br>Analysis workflow and usage information |
-| `/login` | 原型登入（目前預設停用，會導回目標價頁）<br>Prototype login, currently disabled by default and redirected to the target-price page |
+| `/about` | 免登入的分析流程與使用說明<br>Public analysis workflow and usage information |
+| `/privacy` | 免登入的隱私權政策<br>Public privacy policy |
+| `/login` | Google 登入；Public mock mode 預設停用並導回目標價頁<br>Google sign-in; disabled by default in Public mock mode and redirected to the target-price page |
+| `/account` | 個人帳號、資料使用說明與帳號刪除<br>Personal account, data-usage information, and account deletion |
 
 ## 技術棧
 
@@ -107,8 +109,8 @@ npm audit --audit-level=moderate
 
 - 如需連接 REST API，請將環境設定的 `useMockApi` 關閉，並把 `apiBaseUrl` 指向自己的後端服務。<br>
   To connect to a REST API, disable `useMockApi` in the environment configuration and point `apiBaseUrl` to your own backend service.
-- 現有 browser token storage 與 simple auth 是單一使用者原型，不符合 production 安全要求，不應直接暴露於公網。<br>
-  The current browser token storage and simple auth are single-user prototypes that do not meet production security requirements and must not be exposed directly to the public internet.
+- 非 mock 模式使用 Google Identity Services 搭配後端 server-side session 與 HttpOnly cookie；自行部署時必須建立自己的 Google OAuth client，並共同驗證前後端的 HTTPS、cookie、CSRF、CORS 與帳號管理設定。<br>
+  Non-mock mode uses Google Identity Services with a backend server-side session and HttpOnly cookie. Self-hosted deployments must create their own Google OAuth client and jointly verify frontend/backend HTTPS, cookie, CSRF, CORS, and account-management settings.
 - Mock data 只用於展示互動與版面，不代表即時市場或財務資訊。<br>
   Mock data demonstrates interactions and layout only; it does not represent live market or financial information.
 - AI 與財務分析內容僅供研究參考，不構成投資建議。<br>

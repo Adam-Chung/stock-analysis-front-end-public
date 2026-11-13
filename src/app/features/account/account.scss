@@ -1,0 +1,14 @@
+.account-page { max-width: 920px; margin: 0 auto; padding: 1.5rem; display: grid; gap: 1rem; }
+header h1, header p, .card h2, .card p { margin: 0; }
+header p, .card li, .card p { color: var(--ink-dim); }
+.card a { width: fit-content; color: var(--accent); }
+.card { padding: 1.25rem; display: grid; gap: .8rem; background: var(--panel); border: 1px solid var(--hair); border-radius: 14px; }
+.card ul { margin: 0; padding-left: 1.25rem; display: grid; gap: .45rem; line-height: 1.6; }
+button { width: fit-content; padding: .5rem .8rem; color: var(--ink); background: var(--panel-2); border: 1px solid var(--hair); border-radius: 8px; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--hair)); }
+.error { color: var(--bad); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: .65rem; text-align: left; border-bottom: 1px solid var(--hair); }
+@media (max-width: 720px) { .account-page { padding: 1rem; } }

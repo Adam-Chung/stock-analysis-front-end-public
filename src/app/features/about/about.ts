@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /** 「關於本站」：介紹存股分析的定位與方法論，純靜態內容，不呼叫任何 API。 */
 @Component({
   selector: 'app-about',
+  imports: [RouterLink],
   templateUrl: './about.html',
   styleUrl: './about.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

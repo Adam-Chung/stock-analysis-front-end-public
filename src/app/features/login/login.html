@@ -1,11 +1,17 @@
 <main class="login-page">
-  <form class="login-card" (ngSubmit)="submit()">
+  <section class="login-card">
     <h1>💰 存股分析</h1>
-    <p>請先登入以使用網站功能</p>
-    <label>帳號<input name="username" autocomplete="username" [ngModel]="username()" (ngModelChange)="username.set($event)" /></label>
-    <label>密碼<input name="password" type="password" autocomplete="current-password" [ngModel]="password()" (ngModelChange)="password.set($event)" /></label>
+    <p>使用 Google 帳號登入，保留你自己的收藏、估值設定與檢視筆記。</p>
+    <div #googleButton class="google-button" [attr.aria-busy]="loading()"></div>
     @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
-    <button type="submit" [disabled]="loading()">{{ loading() ? '登入中…' : '登入' }}</button>
-  </form>
+    @if (loading()) { <p role="status">登入中…</p> }
+    <p class="privacy-note">
+      登入前請先閱讀本站的<a routerLink="/privacy">隱私權政策</a>，了解基本帳號資料與個人內容的使用方式。
+    </p>
+    <nav class="public-links" aria-label="公開資訊">
+      <a routerLink="/about">關於本站</a>
+      <a routerLink="/privacy">隱私權政策</a>
+    </nav>
+  </section>
 </main>
 

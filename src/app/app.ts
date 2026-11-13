@@ -33,6 +33,7 @@ export class App {
     { label: '目標價分析', icon: '📈', path: '/target-price/2884' },
     { label: '企業體質檢視', icon: '📝', path: '/health-check/2884' },
     { label: '我的最愛區', icon: '🔄', path: '/favorite-update' },
+    { label: '帳號與隱私', icon: '👤', path: '/account' },
   ];
 
   constructor() {
@@ -49,7 +50,7 @@ export class App {
     });
   }
 
-  /** 撤銷目前 Token 並回到登入頁。 */
+  /** 清除目前資料庫 session 並回到登入頁。 */
   logout(): void {
     this.authService.logout();
     void this.router.navigate(['/login']);

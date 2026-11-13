@@ -20,6 +20,19 @@
   font-size: 1rem;
 }
 
+.public-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.9rem;
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
 .about-card {
   background: var(--panel);
   border: 1px solid var(--hair);

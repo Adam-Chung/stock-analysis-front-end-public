@@ -6,13 +6,30 @@ import { App } from './app';
 import { StockSearchService } from './core/stock-search.service';
 import { FavoritesService } from './core/favorites.service';
 import { of } from 'rxjs';
+import { AuthService } from './core/auth.service';
+import { environment } from '../environments/environment';
 
 describe('App', () => {
+  const originalEnvironment = { ...environment };
+
+  afterEach(() => {
+    Object.assign(environment, originalEnvironment);
+  });
+
   beforeEach(async () => {
+    environment.authEnabled = true;
+    environment.useMockApi = false;
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
+    TestBed.inject(AuthService).user.set({
+      id: 1,
+      email: 'adam@example.com',
+      displayName: 'Adam',
+      pictureUrl: null,
+      admin: true,
+    });
   });
 
   it('should create the app', () => {
@@ -21,12 +38,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('shows the application without a token when authentication is disabled', () => {
+  it('shows the application after the session user is restored', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.shell')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('.logout-button')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.logout-button')).not.toBeNull();
   });
 
   it('starts with the favorites sidebar visible', () => {
@@ -100,6 +117,7 @@ describe('App', () => {
       '目標價分析',
       '企業體質檢視',
       '我的最愛區',
+      '帳號與隱私',
     ]);
   });
 

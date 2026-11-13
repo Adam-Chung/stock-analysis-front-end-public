@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
-/** 對登入以外的後端請求附加 Bearer Token。 */
+/** 所有 API 請求使用 HttpOnly session cookie；401 時回登入頁。 */
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const auth = inject(AuthService);
   if (!auth.enabled) {
@@ -12,10 +12,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   }
 
   const router = inject(Router);
-  const token = auth.token();
-  return next(token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request).pipe(
+  const apiRequest = request.url.includes('/api/') ? request.clone({ withCredentials: true }) : request;
+  return next(apiRequest).pipe(
     catchError((error) => {
-      if (error.status === 401 && !request.url.endsWith('/api/auth/login')) {
+      if (error.status === 401 && !request.url.includes('/api/auth/')) {
         auth.clearSession();
         void router.navigate(['/login']);
       }

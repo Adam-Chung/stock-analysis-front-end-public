@@ -1,0 +1,52 @@
+<main class="account-page">
+  <header>
+    <h1>帳號與隱私</h1>
+    <p>管理 Google 登入資料與本站個人內容。</p>
+  </header>
+
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+
+  <section class="card">
+    <h2>你的帳號</h2>
+    <p><strong>{{ auth.user()?.displayName || 'Google 使用者' }}</strong></p>
+    <p>{{ auth.user()?.email }}</p>
+    <button type="button" class="danger" [disabled]="loading()" (click)="deleteAccount()">永久刪除帳號</button>
+  </section>
+
+  <section class="card">
+    <h2>資料使用說明</h2>
+    <ul>
+      <li>本站只保存 Google 提供的帳號識別碼、已驗證信箱、顯示名稱與頭像網址，不保存 Google 密碼。</li>
+      <li>收藏、估值設定、企業備註、檢視季度與 AI 建議依帳號隔離。</li>
+      <li>股價、財報與公開市場資料由所有使用者共用，以節省免費 API 額度。</li>
+      <li>刪除帳號會刪除上述個人內容；共用市場資料不會因此刪除。</li>
+    </ul>
+    <a routerLink="/privacy">查看完整隱私權政策</a>
+  </section>
+
+  @if (auth.user()?.admin) {
+    <section class="card admin-card">
+      <h2>帳號管理</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>名稱</th><th>信箱</th><th>角色</th><th>狀態</th></tr></thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>{{ user.displayName || '—' }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                  <button type="button" [disabled]="user.id === auth.user()?.id"
+                    (click)="setEnabled(user, !user.enabled)">
+                    {{ user.enabled ? '停用' : '啟用' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</main>

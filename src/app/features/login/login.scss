@@ -6,3 +6,7 @@ input { width: 100%; padding: .75rem; color: var(--ink); background: var(--panel
 button { padding: .75rem; color: white; background: var(--accent); border: 0; border-radius: 8px; cursor: pointer; font-weight: 700; }
 button:disabled { opacity: .6; cursor: wait; }
 .error { color: var(--bad); }
+.google-button { min-height: 44px; display: flex; justify-content: center; }
+.privacy-note { font-size: .78rem; line-height: 1.5; }
+.privacy-note a, .public-links a { color: var(--accent); }
+.public-links { display: flex; justify-content: center; gap: 1rem; font-size: .82rem; }

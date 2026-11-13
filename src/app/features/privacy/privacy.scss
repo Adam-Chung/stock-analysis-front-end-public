@@ -1,0 +1,54 @@
+.privacy-page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.privacy-hero {
+  h1, p { margin: 0; }
+  h1 { margin-block: 0.25rem 0.5rem; }
+  p { color: var(--ink-dim); }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.9rem;
+  }
+}
+
+.eyebrow {
+  color: var(--accent) !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.privacy-card {
+  padding: 1.3rem 1.4rem;
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+
+  h2 { margin: 0 0 0.7rem; font-size: 1.05rem; }
+  p { margin: 0 0 0.7rem; color: var(--ink-dim); line-height: 1.75; }
+  p:last-child { margin-bottom: 0; }
+  ul { margin: 0 0 0.8rem; padding-left: 1.25rem; color: var(--ink-dim); line-height: 1.75; }
+  code { color: var(--ink); }
+}
+
+a { color: var(--accent); }
+
+.investment-disclaimer {
+  margin: 0.5rem 0 0;
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .privacy-page { padding: 1rem 1rem 3rem; }
+  .privacy-card { padding: 1.1rem; }
+}
